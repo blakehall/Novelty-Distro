@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Novelty Domain feature.
+ */
+
+include_once 'novelty_domain.features.inc';
