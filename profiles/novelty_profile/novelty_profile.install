@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions to set up the novelty distro profile.
+ */
+function novelty_profile_install() {
+  // First run the standard install profile setup.
+  require(drupal_get_path('profile', 'standard') .'/standard.install');
+  standard_install();
+
+  //turn on novelty, and novelty_domain
+  module_enable(array('novelty', 'novelty_domain'));
+
+  //enable and set default theme
+  theme_enable(array('novelty_theme'));
+  variable_set('theme_default', 'novelty_theme');
+
+  // Set site name
+  variable_set('site_name', 'Novelty');
+}
