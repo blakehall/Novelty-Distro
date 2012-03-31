@@ -1,0 +1,4 @@
+name = Novelty Theme
+description = Seriously?
+core = 7.x
+base theme = stark

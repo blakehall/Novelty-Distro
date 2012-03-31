@@ -28,7 +28,7 @@ function novelty_random_domain($domain = NULL) {
     ->addMetaData('account', user_load(1));
   $result = $query->execute();
 
-  // If we have a matching domain node serve that.
+  // If we don't have a matching domain node serve a random one.
   if (!isset($result['node'])) {
     $max_nid = db_query("SELECT COUNT(*) FROM {node} WHERE type='domain'")->fetchColumn();
     $node = (object) node_load(rand(1, $max_nid));
