@@ -30,13 +30,13 @@ function novelty_random_domain($domain = NULL) {
 
   // If we have a matching domain node serve that.
   if (!isset($result['node'])) {
-    $max_nid = db_query("SELECT COUNT(*) FROM {node}")->fetchColumn();
-    $node = node_load(rand(0, $max_nid));
+    $max_nid = db_query("SELECT COUNT(*) FROM {node} WHERE type='domain'")->fetchColumn();
+    $node = (object) node_load(rand(1, $max_nid));
   }
   else {
     // Otherwise load up the appropriate domain node and serve the shit out of it.
     $nid = array_pop($result['node']);
-    $node = node_load($nid->nid);
+    $node = (object) node_load($nid->nid);
   }
 
   return node_view($node);
