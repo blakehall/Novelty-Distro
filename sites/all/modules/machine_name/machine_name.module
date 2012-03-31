@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * Implements hook_field_info().
+ */
+function machine_name_field_info() {
+  return array(
+    'machine_name' => array(
+      'label' => t('Machine name'),
+      'description' => t('This field stores varchar text in the database.'),
+      'settings' => array(
+        'max_length' => 128,
+        'replace_pattern' => '[^a-z0-9_]+',
+        'replace' => '_',
+      ),
+      'instance_settings' => array(),
+      'default_widget' => 'machine_name_machine_name',
+      'default_formatter' => 'machine_name_default',
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function machine_name_field_widget_info() {
+  return array(
+    'machine_name_machine_name' => array(
+      'label' => t('Machine name'),
+      'field types' => array('machine_name'),
+      'settings' => array('size' => 128),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_form().
+ */
+function machine_name_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $element['value']['#type'] = 'machine_name';
+  $element['value']['#default_value'] = isset($items[$delta]['value']) ? $items[$delta]['value'] : '';
+  $element['value']['#machine_name']['exists'] = 'machine_name_exists';
+  $element['value']['#machine_name']['replace_pattern'] = $field['settings']['replace_pattern'];
+  $element['value']['#machine_name']['replace'] = $field['settings']['replace'];
+  $element['value']['#maxlength'] = $field['settings']['max_length'];
+  $element['value']['#title'] = $instance['label'];
+  $element['value']['#disabled'] = isset($items[$delta]) && !machine_name_field_is_empty($items[$delta], $field);
+  $element['value']['#required'] = $element['#required'];
+  $element['value']['#field'] = $field;
+  return $element;
+}
+
+/**
+ * Implements hook_field_is_empty().
+ */
+function machine_name_field_is_empty($item, $field) {
+  return !isset($item['value']) || $item['value'] === '';
+}
+
+/**
+ * Check that this machine name value is unique.
+ */
+function machine_name_exists($value, $element, &$form_state) {
+  $query = new EntityFieldQuery();
+  $query->fieldCondition($element['#field'], 'value', $value);
+  $query->count();
+  return $query->execute();
+}
+

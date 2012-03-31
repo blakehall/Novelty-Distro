@@ -1,0 +1,4 @@
+name = Novelty
+description = provides the default behavior for our novelty distribution
+core = 7.x
+dependencies[] = bad_judgement

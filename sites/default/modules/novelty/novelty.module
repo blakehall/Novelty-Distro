@@ -1,0 +1,43 @@
+<?php
+
+function novelty_menu() {
+  $items = array();
+  
+  $items['random'] = array(
+    'title' => 'Novelty',
+    'page callback' => 'novelty_random_domain',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+// Page callback for /random
+function novelty_random_domain($domain = NULL) {
+  // If we don't have a domain, pick one to serve up at random.
+  $domain = $_SERVER['HTTP_HOST'];
+  $subdomain = preg_split('/\./', $domain);
+  $subdomain_string = $subdomain[0];
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'domain')
+    ->propertyCondition('status', 1)
+    ->fieldCondition('field_domain', 'value', $subdomain_string, '=')
+    ->addMetaData('account', user_load(1));
+  $result = $query->execute();
+
+  // If we have a matching domain node serve that.
+  if (!isset($result['node'])) {
+    $max_nid = db_query("SELECT COUNT(*) FROM {node}")->fetchColumn();
+    $node = node_load(rand(0, $max_nid));
+  }
+  else {
+    // Otherwise load up the appropriate domain node and serve the shit out of it.
+    $nid = array_pop($result['node']);
+    $node = node_load($nid->nid);
+  }
+
+  return node_view($node);
+}
